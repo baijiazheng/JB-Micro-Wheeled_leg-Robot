@@ -110,28 +110,47 @@ def make_lib(x, y, des, val, pkg, pins, symbol_name):
     subs.append(f'#@$T~N~{fmt(x-20)}~{fmt(y+hh+14)}~0~#000080~Arial~~~~~comment~{val}~1~start~{uid()}~0~')
     subs.append(f'#@$R~{fmt(x-hw)}~{fmt(y-hh)}~~~120~{fmt(h)}~#880000~1~0~none~{uid()}~0~')
     pinpos = {}
+    PINLEN = 10
     for i, (num, nm) in enumerate(left):
         py = y - hh + 15 + i * 10
-        subs.append(gen_pin(x - hw, py, 0, num, uid()))
-        pinpos[num] = (x - hw, py, 0)
+        px = x - hw - PINLEN                      # 连接点在矩形外侧
+        subs.append(gen_pin(px, py, 180, num, uid(), nm, PINLEN))
+        # 引脚名: 写在矩形内、靠引脚处 (格式对齐参考模板)
+        subs.append(f'#@$T~N~{fmt(x-hw+6)}~{fmt(py-3)}~0~#000000~Arial~~~~~comment~{nm}~1~start~{uid()}~0~')
+        pinpos[num] = (px, py, 180)
     for i, (num, nm) in enumerate(right):
         py = y - hh + 15 + i * 10
-        subs.append(gen_pin(x + hw, py, 180, num, uid()))
-        pinpos[num] = (x + hw, py, 180)
+        px = x + hw + PINLEN                      # 连接点在矩形外侧
+        subs.append(gen_pin(px, py, 0, num, uid(), nm, PINLEN))
+        subs.append(f'#@$T~N~{fmt(x+hw-6)}~{fmt(py-3)}~0~#000000~Arial~~~~~comment~{nm}~1~end~{uid()}~0~')
+        pinpos[num] = (px, py, 0)
     settings = (f'package`{pkg}`nameAlias`Value``BOM_Supplier Part``BOM_Supplier``'
                 f'Contributor`LCEDA_Lib`spicePre`U`spiceSymbolName`{symbol_name}``~~')
     header = f'LIB~{fmt(x)}~{fmt(y)}~{settings}0~{uid()}~{uid()}~{uid()}~0~~yes~yes~~0~'
     return header + ''.join(subs), pinpos
 
-def gen_pin(x, y, rot, num, pid, length=10):
-    """格式对齐参考项目模板 (短格式): 连接点=引脚坐标, 线向符号体内延伸"""
+def gen_pin(x, y, rot, num, pid, name='~', length=10):
+    """完整引脚格式 (对齐参考项目): 头 + 连接点 + 线 + 名字文本 + 编号文本 + 端部装饰
+    约定: rot=180 -> 指向右(线向 +x, 用于符号左侧引脚)
+          rot=0   -> 指向左(线向 -x, 用于符号右侧引脚)"""
     x, y = float(x), float(y)
-    if rot == 180:      # 朝左: 线向左延 (-)
-        line = f'M {fmt(x)} {fmt(y)} h -{length}'
-    else:               # 朝右: 线向右延 (+)
+    col = '#000000'
+    if rot == 180:      # 指向右
         line = f'M {fmt(x)} {fmt(y)} h {length}'
-    return (f'#@$P~show~0~{num}~{fmt(x)}~{fmt(y)}~{rot}~{pid}~0'
-            f'^^{fmt(x)}~{fmt(y)}^^{line}~')
+        nx1, ny1, a1 = x + 13.7, y + 4, 'start'
+        nx2, ny2, a2 = x + 9.5,  y - 1, 'end'
+        ax, ay = x + 7, y
+        dec = f'M {fmt(x+10)} {fmt(y+3)} L {fmt(x+13)} {fmt(y)} L {fmt(x+10)} {fmt(y-3)}'
+    else:               # 指向左
+        line = f'M {fmt(x)} {fmt(y)} h -{length}'
+        nx1, ny1, a1 = x - 13.7, y + 4, 'end'
+        nx2, ny2, a2 = x - 9.5,  y - 1, 'start'
+        ax, ay = x - 7, y
+        dec = f'M {fmt(x-10)} {fmt(y+3)} L {fmt(x-13)} {fmt(y)} L {fmt(x-10)} {fmt(y-3)}'
+    return (f'#@$P~show~0~{num}~{fmt(x)}~{fmt(y)}~{rot}~{pid}~0^^{fmt(x)}~{fmt(y)}^^'
+            f'{line}~{col}^^1~{fmt(nx1)}~{fmt(ny1)}~0~{name}~{a1}~~~'
+            f'{col}^^1~{fmt(nx2)}~{fmt(ny2)}~0~{num}~{a2}~~~'
+            f'{col}^^0~{fmt(ax)}~{fmt(ay)}^^0~{dec}')
 
 # ---------- 导线 / 网络标签 ----------
 def gen_wire(x1, y1, x2, y2):
@@ -186,7 +205,7 @@ def build(comps, nets, out_path, title, pin_override=None):
             if not hit:
                 miss.append(f'{des}.{pname} ({net})'); continue
             num, px, py, rot = hit
-            ex = px + (14 if rot == 180 else -14)
+            ex = px + (-14 if rot == 180 else 14)
             shapes.append(gen_wire(px, py, ex, py)); n_wire += 1
             shapes.append(gen_netlabel(ex, py, net)); n_label += 1
 
