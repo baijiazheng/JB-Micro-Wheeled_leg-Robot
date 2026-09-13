@@ -8,6 +8,6 @@
 
 void SysTick_Handler(void);
 void TIM4_IRQHandler(void);
-void CAN_RX0_IRQHandler(void);
+void USB_LP_CAN1_RX0_IRQHandler(void);
 
 #endif /* STM32F1xx_IT_H */

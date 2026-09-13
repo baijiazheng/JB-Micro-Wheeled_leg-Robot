@@ -21,8 +21,10 @@ void TIM4_IRQHandler(void)
     HAL_TIM_IRQHandler(&htim4);
 }
 
-/* CAN 接收中断: 收到指令帧 */
-void CAN_RX0_IRQHandler(void)
+/* CAN 接收中断: 收到指令帧
+ * 注意: F103 的 CAN1_RX0 与 USB 低优先级共用中断向量,
+ * 处理函数名必须是 USB_LP_CAN1_RX0_IRQHandler (见启动文件) */
+void USB_LP_CAN1_RX0_IRQHandler(void)
 {
     HAL_CAN_IRQHandler(&hcan);
 }
