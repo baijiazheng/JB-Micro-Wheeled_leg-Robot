@@ -38,8 +38,16 @@ int main(void)
     MX_CAN_Init();
     MX_TIM4_Init();
 
+    /* 启动 CAN 接收 */
+    HAL_CAN_Start(&hcan);
+    HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING);
+    HAL_NVIC_EnableIRQ(USB_LP_CAN1_RX0_IRQn);
+
     control_loop_init();
-    HAL_TIM_Base_Start_IT(&htim4); /* 启动 1kHz 控制中断 */
+
+    /* 启动 1kHz 控制中断 */
+    HAL_NVIC_EnableIRQ(TIM4_IRQn);
+    HAL_TIM_Base_Start_IT(&htim4);
 
     while (1) {
         control_loop_background();
@@ -74,6 +82,14 @@ static void SystemClock_Config(void)
 /* ================= I2C1: AS5600 #1 (PB6/PB7) ================= */
 static void MX_I2C1_Init(void)
 {
+    __HAL_RCC_I2C1_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    GPIO_InitTypeDef gpio = {0};
+    gpio.Pin = GPIO_PIN_6 | GPIO_PIN_7;
+    gpio.Mode = GPIO_MODE_AF_OD;          /* I2C 开漏 */
+    gpio.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(GPIOB, &gpio);
+
     hi2c1.Instance = I2C1;
     hi2c1.Init.ClockSpeed = 400000;
     hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
@@ -89,6 +105,14 @@ static void MX_I2C1_Init(void)
 /* ================= I2C2: AS5600 #2 + MPU6050 (PB10/PB11) ================= */
 static void MX_I2C2_Init(void)
 {
+    __HAL_RCC_I2C2_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    GPIO_InitTypeDef gpio = {0};
+    gpio.Pin = GPIO_PIN_10 | GPIO_PIN_11;
+    gpio.Mode = GPIO_MODE_AF_OD;
+    gpio.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(GPIOB, &gpio);
+
     hi2c2.Instance = I2C2;
     hi2c2.Init.ClockSpeed = 400000;
     hi2c2.Init.DutyCycle = I2C_DUTYCYCLE_2;
@@ -104,6 +128,14 @@ static void MX_I2C2_Init(void)
 /* ================= CAN: 500kbps (PA11/PA12) ================= */
 static void MX_CAN_Init(void)
 {
+    __HAL_RCC_CAN1_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    GPIO_InitTypeDef gpio = {0};
+    gpio.Pin = GPIO_PIN_11 | GPIO_PIN_12;
+    gpio.Mode = GPIO_MODE_AF_PP;
+    gpio.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(GPIOA, &gpio);
+
     hcan.Instance = CAN1;
     hcan.Init.Prescaler = 9;         /* APB1 36MHz / 9 / 8 = 500kHz */
     hcan.Init.Mode = CAN_MODE_NORMAL;

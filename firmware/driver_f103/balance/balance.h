@@ -30,6 +30,10 @@ typedef struct {
     float distance_zero;  /* 位移零点 (运动指令变化时重置) */
 
     float output_limit;   /* 输出转矩限幅 (参考 .limit=8) */
+
+    /* 位移零点重置状态 (参考 lqr_balance_loop) */
+    float prev_speed_target;  /* 上一周期目标速度 */
+    uint8_t move_stop_flag;   /* 运动指令复零时的原地停车标志 */
 } BalanceController;
 
 /**

@@ -25,6 +25,11 @@ int main(void)
     MX_USART6_UART_Init();
     MX_CAN1_Init();
 
+    /* 启动 CAN 接收 */
+    HAL_CAN_Start(&hcan1);
+    HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
+    HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
+
     main_control_init();
 
     while (1) {

@@ -36,12 +36,36 @@ void balance_init(BalanceController *bc, float dt)
     bc->angle_zero = -2.25f; /* 参考初值 (实际重心偏置) */
     bc->distance_zero = 0.0f;
     bc->output_limit = 8.0f;
+    bc->prev_speed_target = 0.0f;
+    bc->move_stop_flag = 0;
 }
 
 float balance_update(BalanceController *bc,
                      float angle, float gyro, float distance, float speed,
                      float speed_target)
 {
+    /* 0. 位移零点重置 (参考 lqr_balance_loop, 关键: 让位移环不与速度环打架)
+     *   - 有运动指令时: 每周期重置位移零点, 位移环退出, 速度环接管
+     *   - 运动指令复零时: 等速度降到阈值后重置位移零点 (原地停车)
+     *   - 被快速推动时: 重置位移零点 (防止猛冲)
+     */
+    if (speed_target != 0.0f) {
+        bc->distance_zero = distance;   /* 运动时位移环不干预 */
+        bc->move_stop_flag = 0;
+    } else {
+        if (bc->prev_speed_target != 0.0f) {
+            bc->move_stop_flag = 1;     /* 刚收到停止指令 */
+        }
+        if (bc->move_stop_flag && (speed < 0.5f && speed > -0.5f)) {
+            bc->distance_zero = distance;   /* 停稳后原地保持 */
+            bc->move_stop_flag = 0;
+        }
+    }
+    if (speed > 15.0f || speed < -15.0f) {
+        bc->distance_zero = distance;   /* 被快速推动 -> 原地停车 */
+    }
+    bc->prev_speed_target = speed_target;
+
     /* 1. 角度项: 正反馈
      *    pid_update(setpoint=angle, measurement=angle_zero) -> error = angle - zero */
     float angle_control = pid_update(&bc->pid_angle, angle, bc->angle_zero);

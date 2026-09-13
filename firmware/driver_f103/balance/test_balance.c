@@ -117,7 +117,7 @@ int main(void)
         bc.angle_zero = 0.0f;
         bc.pid_angle.kp = KP_ANGLE;
         bc.pid_gyro.kp  = KD_GYRO;
-        bc.pid_distance.kp = 0.0f;   /* 运动时关闭位置保持 (参考固件: 位移零点重置) */
+        bc.pid_distance.kp = KP_DIST;  /* 用实际增益, 位移零点重置逻辑自动处理运动 */
         bc.pid_speed.kp = KD_SPEED;
 
         Pendulum p = {0.0f, 0.0f, 0.0f, 0.0f};
