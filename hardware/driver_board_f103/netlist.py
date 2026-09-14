@@ -1,153 +1,28 @@
 #!/usr/bin/env python3
 """
-驱动板 F103 网表定义 + 校验
+驱动板 F103 网表校验 (薄封装)
 
-这是原理图的"逻辑真相"：每个元件、每个网络、每根连线都在这里。
-画立创EDA原理图时照此连线，画完可对照本网表检查。
+网表的"逻辑真相"只存在于一处: hardware/kicad_gen/gen_driver.py 的 GROUPS / NETS。
+本文件不再重复定义网表, 只转调总校验程序。
+
+为什么要这样改:
+    之前本文件手抄了一份 CONNECTORS 表, 把电机连接器写成 "2P", 而实际网表连了
+    3 个引脚 —— 同一份信息两处维护必然漂移, 而且给出的是**假信息**。
+    现在改为"单一来源 + 自动校验"。
 
 用法:
-  python3 netlist.py          # 校验 + 输出报告
+    python3 netlist.py             # 校验全部 4 块板
+    python3 ../check_netlists.py   # 等价
 """
 
-# ============ 元件清单 ============
-# (designator, 名称, 值, 封装, 功能)
-COMPONENTS = [
-    ("U1",  "STM32F103C8T6",  "",      "LQFP-48",     "主控 MCU"),
-    ("U2",  "L6234PD013TR",   "",      "PowerSO-20",  "电机1 三相驱动"),
-    ("U3",  "L6234PD013TR",   "",      "PowerSO-20",  "电机2 三相驱动"),
-    ("U4",  "AS5600-ASOM",    "",      "SOIC-8",      "编码器1 (磁)"),
-    ("U5",  "AS5600-ASOM",    "",      "SOIC-8",      "编码器2 (磁)"),
-    ("U6",  "MPU6050",        "",      "QFN-24",      "IMU 姿态"),
-    ("U7",  "MP2225GJ-Z",     "",      "TSOT-23-8",   "降压 7.4V->5V"),
-    ("U8",  "AMS1117-3.3",    "",      "SOT-223",     "LDO 5V->3.3V"),
-    ("U9",  "TJA1050",        "",      "SOIC-8",      "CAN 收发器"),
-    ("U10", "CH340C",         "",      "SOP-16",      "USB 转串口"),
-    ("L1",  "电感",           "4.7uH", "SMD",         "降压电感"),
-    ("R1",  "电阻",           "100k",  "0805",        "MP2225 EN 上拉"),
-    ("R2",  "电阻",           "40.2k", "0805",        "MP2225 反馈"),
-    ("R3",  "电阻",           "5.49k", "0805",        "MP2225 反馈"),
-    ("R4",  "电阻",           "4.7k",  "0603",        "I2C1 上拉"),
-    ("R5",  "电阻",           "4.7k",  "0603",        "I2C1 上拉"),
-    ("R6",  "电阻",           "4.7k",  "0603",        "I2C2 上拉"),
-    ("R7",  "电阻",           "4.7k",  "0603",        "I2C2 上拉"),
-    ("R8",  "电阻",           "120Ω",  "0805",        "CAN 终端"),
-    ("R9",  "电阻",           "10k",   "0603",        "BOOT0 下拉"),
-    ("R10", "电阻",           "10k",   "0603",        "NRST 上拉"),
-    ("C1",  "电容",           "22uF",  "0805",        "MP2225 输入"),
-    ("C2",  "电容",           "0.1uF", "0805",        "MP2225 输入"),
-    ("C3",  "电容",           "22uF",  "0805",        "MP2225 输出"),
-    ("C4",  "电容",           "0.1uF", "0805",        "MP2225 输出"),
-    ("C5",  "电容",           "100uF", "SMD",         "L6234 电机轨旁路 ×2"),
-    ("C6",  "电容",           "100nF", "0805",        "L6234 电机轨旁路 ×2"),
-    ("C7",  "电容",           "1uF",   "0805",        "L6234 Vcp/Vboot"),
-    ("C8",  "电容",           "100nF", "0805",        "MCU 去耦"),
-    ("C9",  "电容",           "100nF", "0805",        "MCU 去耦"),
-    ("C10", "电容",           "100nF", "0805",        "MCU 去耦"),
-    ("C11", "电容",           "100nF", "0805",        "AS5600 去耦"),
-    ("C12", "电容",           "100nF", "0805",        "MPU6050 去耦"),
-    ("D1",  "肖特基",         "SS34",  "SMA",         "防反接"),
-    ("D2",  "LED",            "红",    "0805",        "电源指示"),
-    ("J1",  "连接器",         "XH2.54", "TH",         "电池输入"),
-    ("J2",  "连接器",         "2P",    "TH",          "电机1 三相+"),
-    ("J3",  "连接器",         "2P",    "TH",          "电机2 三相+"),
-    ("J4",  "连接器",         "4P",    "TH",          "SWD 调试"),
-    ("J5",  "连接器",         "MicroUSB", "SMD",      "USB 调试"),
-    ("SW1", "开关",           "SS-12D02", "TH",       "总电源开关"),
-]
+import os
+import subprocess
+import sys
 
-# ============ 网络清单 ============
-# 网名 -> 连接的 (元件, 引脚) 列表
-NETS = {
-    # ---- 电源 ----
-    "VIN":       [("J1","1"), ("SW1","1"), ("D1","K"), ("U2","Vs"), ("U3","Vs"), ("U7","IN")],
-    "SW_OUT":    [("SW1","2"), ("D1","A")],
-    "SW_NODE":   [("U7","SW"), ("L1","1")],
-    "+5V":       [("L1","2"), ("U8","IN"), ("U9","VCC"), ("U10","VCC")],
-    "+3V3":      [("U8","OUT"), ("U1","VDD"), ("U4","VDD"), ("U5","VDD"), ("U6","VDD")],
-    "GND":       [("J1","2"), ("U1","VSS"), ("U2","GND"), ("U3","GND"),
-                  ("U4","GND"), ("U5","GND"), ("U6","GND"), ("U7","GND"),
-                  ("U8","GND"), ("U9","GND"), ("U10","GND")],
+HERE = os.path.dirname(os.path.abspath(__file__))
+CHECKER = os.path.join(HERE, '..', 'check_netlists.py')
 
-    # ---- 电机1 (U2 L6234) ----
-    "M1_PHA":    [("U2","IN1"), ("U1","PA8")],
-    "M1_PHB":    [("U2","IN2"), ("U1","PA9")],
-    "M1_PHC":    [("U2","IN3"), ("U1","PA10")],
-    "M1_EN":     [("U2","EN1"), ("U2","EN2"), ("U2","EN3"), ("U1","PB1")],
-    "M1_OUT1":   [("U2","OUT1"), ("J2","1")],
-    "M1_OUT2":   [("U2","OUT2"), ("J2","2")],
-    "M1_OUT3":   [("U2","OUT3"), ("J2","3")],
+print('驱动板网表定义见 hardware/kicad_gen/gen_driver.py (单一来源)')
+print('本文件已改为转调 hardware/check_netlists.py\n')
 
-    # ---- 电机2 (U3 L6234) ----
-    "M2_PHA":    [("U3","IN1"), ("U1","PA6")],
-    "M2_PHB":    [("U3","IN2"), ("U1","PA7")],
-    "M2_PHC":    [("U3","IN3"), ("U1","PB0")],
-    "M2_EN":     [("U3","EN1"), ("U3","EN2"), ("U3","EN3"), ("U1","PB12")],
-    "M2_OUT1":   [("U3","OUT1"), ("J3","1")],
-    "M2_OUT2":   [("U3","OUT2"), ("J3","2")],
-    "M2_OUT3":   [("U3","OUT3"), ("J3","3")],
-
-    # ---- I2C1 (编码器1) ----
-    "I2C1_SCL":  [("U1","PB6"), ("U4","SCL"), ("R4","1")],
-    "I2C1_SDA":  [("U1","PB7"), ("U4","SDA"), ("R5","1")],
-
-    # ---- I2C2 (编码器2 + IMU) ----
-    "I2C2_SCL":  [("U1","PB10"), ("U5","SCL"), ("U6","SCL"), ("R6","1")],
-    "I2C2_SDA":  [("U1","PB11"), ("U5","SDA"), ("U6","SDA"), ("R7","1")],
-
-    # ---- CAN ----
-    "CAN_RX":    [("U1","PA11"), ("U9","RXD")],
-    "CAN_TX":    [("U1","PA12"), ("U9","TXD")],
-    "CAN_H":     [("U9","CANH"), ("R8","1")],
-    "CAN_L":     [("U9","CANL"), ("R8","2")],
-
-    # ---- USB 调试串口 ----
-    "UART2_TX":  [("U1","PA2"), ("U10","RXD")],
-    "UART2_RX":  [("U1","PA3"), ("U10","TXD")],
-
-    # ---- SWD ----
-    "SWDIO":     [("U1","PA13"), ("J4","1")],
-    "SWCLK":     [("U1","PA14"), ("J4","2")],
-
-    # ---- 电源树 ----
-    "FB":        [("U7","FB"), ("R2","1"), ("R3","1")],
-    "BAT_ADC":   [("U1","PA0"), ("R2","2")],
-}
-
-def validate():
-    """校验: 每个网络的连接、引脚重复、电源地存在性"""
-    errors = []
-    pins = {}  # (component, pin) -> net
-
-    for net, conns in NETS.items():
-        for c, p in conns:
-            key = (c, p)
-            if key in pins:
-                errors.append(f"引脚重复: {c}.{p} 同时连到 {pins[key]} 和 {net}")
-            pins[key] = net
-
-    # 检查关键网络存在
-    for req in ["VIN", "+5V", "+3V3", "GND", "CAN_H", "CAN_L"]:
-        if req not in NETS:
-            errors.append(f"缺少关键网络: {req}")
-
-    return errors, pins
-
-if __name__ == "__main__":
-    errors, pins = validate()
-    n_components = len(COMPONENTS)
-    n_nets = len(NETS)
-    n_connections = sum(len(v) for v in NETS.values())
-
-    print("========== 驱动板 F103 网表校验 ==========")
-    print(f"元件: {n_components} 个")
-    print(f"网络: {n_nets} 个")
-    print(f"连线: {n_connections} 条")
-    print()
-    if errors:
-        print(f"[FAIL] {len(errors)} 个错误:")
-        for e in errors:
-            print(f"  - {e}")
-        raise SystemExit(1)
-    else:
-        print("[ OK ] 无引脚重复, 关键网络齐全")
-        print("[ OK ] 网表校验通过 ✅")
+sys.exit(subprocess.call([sys.executable, CHECKER]))

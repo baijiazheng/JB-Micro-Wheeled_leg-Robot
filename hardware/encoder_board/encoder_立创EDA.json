@@ -1,0 +1,86 @@
+{
+ "editorVersion": "6.5.34",
+ "docType": "5",
+ "title": "JB-Micro-Wheeled_leg-Robot 编码器板 (AS5600) x2",
+ "description": "",
+ "colors": {},
+ "schematics": [
+  {
+   "docType": "1",
+   "title": "v1.0",
+   "description": "",
+   "dataStr": {
+    "head": {
+     "docType": "1",
+     "editorVersion": "6.5.34",
+     "newgId": true,
+     "c_para": {
+      "Prefix Start": "1"
+     },
+     "c_spiceCmd": "null",
+     "hasIdFlag": true,
+     "uuid": "845e1b5d129f494fb4fcf9a5629bc427",
+     "x": "0",
+     "y": "0",
+     "portOfADImportHack": "",
+     "importFlag": 0,
+     "transformList": ""
+    },
+    "canvas": "CA~1000~1000~#FFFFFF~yes~#CCCCCC~5~1000~1000~line~5~pixel~5~0~0",
+    "shape": [
+     "LIB~300~300~package`SOIC-8_L5.0-W4.0-P1.27-LS6.0-BL`nameAlias`Value``BOM_Supplier Part``BOM_Supplier``Contributor`LCEDA_Lib`spicePre`U`spiceSymbolName`AS5600``~~0~gge0f3cda7b5b~gge5d2931b8d7~ggedaa391f116~0~~yes~yes~~0~#@$T~P~280~256~0~#000080~Arial~~~~~comment~U1~1~start~ggeca8bd0ac9f~0~#@$T~N~280~344~0~#000080~Arial~~~~~comment~AS5600~1~start~gge2b9007fd5e~0~#@$R~240~270~~~120~60~#880000~1~0~none~ggef9f96287d7~0~#@$P~show~0~1~230~285~180~gge973f9ebd08~0^^230~285^^M 230 285 h 10~#000000^^1~243.7~289~0~VDD5V~start~~~#000000^^1~239.5~284~0~1~end~~~#000000^^0~237~285^^0~M 240 288 L 243 285 L 240 282#@$P~show~0~3~230~295~180~gge528d717dad~0^^230~295^^M 230 295 h 10~#000000^^1~243.7~299~0~OUT~start~~~#000000^^1~239.5~294~0~3~end~~~#000000^^0~237~295^^0~M 240 298 L 243 295 L 240 292#@$P~show~0~5~230~305~180~gge72c40b9866~0^^230~305^^M 230 305 h 10~#000000^^1~243.7~309~0~PGO~start~~~#000000^^1~239.5~304~0~5~end~~~#000000^^0~237~305^^0~M 240 308 L 243 305 L 240 302#@$P~show~0~7~230~315~180~ggefa6476e15a~0^^230~315^^M 230 315 h 10~#000000^^1~243.7~319~0~SCL~start~~~#000000^^1~239.5~314~0~7~end~~~#000000^^0~237~315^^0~M 240 318 L 243 315 L 240 312#@$P~show~0~2~370~285~0~gge38ae6cf5b2~0^^370~285^^M 370 285 h -10~#000000^^1~356.3~289~0~VDD3V3~end~~~#000000^^1~360.5~284~0~2~start~~~#000000^^0~363~285^^0~M 360 288 L 357 285 L 360 282#@$P~show~0~4~370~295~0~gge084a1d9462~0^^370~295^^M 370 295 h -10~#000000^^1~356.3~299~0~GND~end~~~#000000^^1~360.5~294~0~4~start~~~#000000^^0~363~295^^0~M 360 298 L 357 295 L 360 292#@$P~show~0~6~370~305~0~ggea259136565~0^^370~305^^M 370 305 h -10~#000000^^1~356.3~309~0~SDA~end~~~#000000^^1~360.5~304~0~6~start~~~#000000^^0~363~305^^0~M 360 308 L 357 305 L 360 302#@$P~show~0~8~370~315~0~gge49f04d9c7c~0^^370~315^^M 370 315 h -10~#000000^^1~356.3~319~0~DIR~end~~~#000000^^1~360.5~314~0~8~start~~~#000000^^0~363~315^^0~M 360 318 L 357 315 L 360 312",
+     "LIB~560~300~package`GH1.25_4P`nameAlias`Value``BOM_Supplier Part``BOM_Supplier``Contributor`LCEDA_Lib`spicePre`U`spiceSymbolName`Conn_GH4``~~0~gge4ae381e2af~gge79d52a403f~ggefbf34d62b5~0~~yes~yes~~0~#@$T~P~540~266~0~#000080~Arial~~~~~comment~J2~1~start~gge8f01121fac~0~#@$T~N~540~334~0~#000080~Arial~~~~~comment~GH1.25-4P~1~start~ggead00afa3ea~0~#@$R~500~280~~~120~40~#880000~1~0~none~ggec8523cfc69~0~#@$P~show~0~1~490~295~180~gge0651deb42b~0^^490~295^^M 490 295 h 10~#000000^^1~503.7~299~0~+3V3~start~~~#000000^^1~499.5~294~0~1~end~~~#000000^^0~497~295^^0~M 500 298 L 503 295 L 500 292#@$P~show~0~2~490~305~180~ggedefaa90d32~0^^490~305^^M 490 305 h 10~#000000^^1~503.7~309~0~SCL~start~~~#000000^^1~499.5~304~0~2~end~~~#000000^^0~497~305^^0~M 500 308 L 503 305 L 500 302#@$P~show~0~3~630~295~0~gge5ca99a19cb~0^^630~295^^M 630 295 h -10~#000000^^1~616.3~299~0~SDA~end~~~#000000^^1~620.5~294~0~3~start~~~#000000^^0~623~295^^0~M 620 298 L 617 295 L 620 292#@$P~show~0~4~630~305~0~gge06464f1066~0^^630~305^^M 630 305 h -10~#000000^^1~616.3~309~0~GND~end~~~#000000^^1~620.5~304~0~4~start~~~#000000^^0~623~305^^0~M 620 308 L 617 305 L 620 302",
+     "LIB~300~470~package`R0805`nameAlias`Value``BOM_Supplier Part``BOM_Supplier``Contributor`LCEDA_Lib`spicePre`U`spiceSymbolName`R``~~0~ggea1bbcef94a~gge9ef3e3ed40~ggebb562b63e6~0~~yes~yes~~0~#@$T~P~280~441~0~#000080~Arial~~~~~comment~R1~1~start~ggef4f9e3282f~0~#@$T~N~280~499~0~#000080~Arial~~~~~comment~4.7k~1~start~gge9b2f6eadc6~0~#@$R~240~455~~~120~30~#880000~1~0~none~gge78ecb61096~0~#@$P~show~0~1~230~470~180~gged6d7f47b11~0^^230~470^^M 230 470 h 10~#000000^^1~243.7~474~0~1~start~~~#000000^^1~239.5~469~0~1~end~~~#000000^^0~237~470^^0~M 240 473 L 243 470 L 240 467#@$P~show~0~2~370~470~0~gge63010ae52a~0^^370~470^^M 370 470 h -10~#000000^^1~356.3~474~0~2~end~~~#000000^^1~360.5~469~0~2~start~~~#000000^^0~363~470^^0~M 360 473 L 357 470 L 360 467",
+     "LIB~400~470~package`R0805`nameAlias`Value``BOM_Supplier Part``BOM_Supplier``Contributor`LCEDA_Lib`spicePre`U`spiceSymbolName`R``~~0~ggee417a97a09~ggeeb10a36674~ggea85e50b79f~0~~yes~yes~~0~#@$T~P~380~441~0~#000080~Arial~~~~~comment~R2~1~start~gge848220ef62~0~#@$T~N~380~499~0~#000080~Arial~~~~~comment~4.7k~1~start~gge75d8a00606~0~#@$R~340~455~~~120~30~#880000~1~0~none~gge1b41c7d0d7~0~#@$P~show~0~1~330~470~180~ggeaf06e7f167~0^^330~470^^M 330 470 h 10~#000000^^1~343.7~474~0~1~start~~~#000000^^1~339.5~469~0~1~end~~~#000000^^0~337~470^^0~M 340 473 L 343 470 L 340 467#@$P~show~0~2~470~470~0~gge5c0a8e05b8~0^^470~470^^M 470 470 h -10~#000000^^1~456.3~474~0~2~end~~~#000000^^1~460.5~469~0~2~start~~~#000000^^0~463~470^^0~M 460 473 L 457 470 L 460 467",
+     "LIB~500~470~package`C0805`nameAlias`Value``BOM_Supplier Part``BOM_Supplier``Contributor`LCEDA_Lib`spicePre`U`spiceSymbolName`C``~~0~ggeb723d2032c~ggeb793e6874d~gge2913dc5c70~0~~yes~yes~~0~#@$T~P~480~441~0~#000080~Arial~~~~~comment~C1~1~start~gge13f8975ed9~0~#@$T~N~480~499~0~#000080~Arial~~~~~comment~100nF~1~start~gge2347af4958~0~#@$R~440~455~~~120~30~#880000~1~0~none~ggebfff2dd48f~0~#@$P~show~0~1~430~470~180~gge53e5f74685~0^^430~470^^M 430 470 h 10~#000000^^1~443.7~474~0~1~start~~~#000000^^1~439.5~469~0~1~end~~~#000000^^0~437~470^^0~M 440 473 L 443 470 L 440 467#@$P~show~0~2~570~470~0~ggee43fbedb32~0^^570~470^^M 570 470 h -10~#000000^^1~556.3~474~0~2~end~~~#000000^^1~560.5~469~0~2~start~~~#000000^^0~563~470^^0~M 560 473 L 557 470 L 560 467",
+     "LIB~600~470~package`C0805`nameAlias`Value``BOM_Supplier Part``BOM_Supplier``Contributor`LCEDA_Lib`spicePre`U`spiceSymbolName`C``~~0~gge6d7faa0ed8~gge848eace715~gge65f5a1df65~0~~yes~yes~~0~#@$T~P~580~441~0~#000080~Arial~~~~~comment~C2~1~start~ggee510f2f111~0~#@$T~N~580~499~0~#000080~Arial~~~~~comment~1uF~1~start~gge57b430f69f~0~#@$R~540~455~~~120~30~#880000~1~0~none~ggef71269e4f0~0~#@$P~show~0~1~530~470~180~gge788ad69e7d~0^^530~470^^M 530 470 h 10~#000000^^1~543.7~474~0~1~start~~~#000000^^1~539.5~469~0~1~end~~~#000000^^0~537~470^^0~M 540 473 L 543 470 L 540 467#@$P~show~0~2~670~470~0~gge52d929050b~0^^670~470^^M 670 470 h -10~#000000^^1~656.3~474~0~2~end~~~#000000^^1~660.5~469~0~2~start~~~#000000^^0~663~470^^0~M 660 473 L 657 470 L 660 467",
+     "W~230 285 216 285~#008800~1~0~none~gge1e9c1da66a~0",
+     "N~216~285~0~#0000ff~+3V3~gge1d4dc6cf02~end~216~293~Times New Roman~7pt~0",
+     "W~370 285 384 285~#008800~1~0~none~gge8b5893960a~0",
+     "N~384~285~0~#0000ff~+3V3~ggea694aa4769~end~384~293~Times New Roman~7pt~0",
+     "W~430 470 416 470~#008800~1~0~none~gge54d67c66ca~0",
+     "N~416~470~0~#0000ff~+3V3~gge612abff0fc~end~416~478~Times New Roman~7pt~0",
+     "W~530 470 516 470~#008800~1~0~none~gge31f796252a~0",
+     "N~516~470~0~#0000ff~+3V3~gge2a1685e1bc~end~516~478~Times New Roman~7pt~0",
+     "W~370 470 384 470~#008800~1~0~none~ggeec013bdc48~0",
+     "N~384~470~0~#0000ff~+3V3~gge0fdba0c4fd~end~384~478~Times New Roman~7pt~0",
+     "W~470 470 484 470~#008800~1~0~none~ggee1dfa1cb32~0",
+     "N~484~470~0~#0000ff~+3V3~ggefe7be00dc3~end~484~478~Times New Roman~7pt~0",
+     "W~490 295 476 295~#008800~1~0~none~ggec1dc8b433f~0",
+     "N~476~295~0~#0000ff~+3V3~gged40170fc8b~end~476~303~Times New Roman~7pt~0",
+     "W~230 315 216 315~#008800~1~0~none~gge601c1d1865~0",
+     "N~216~315~0~#0000ff~SCL~gge67f9b2a4d0~end~216~323~Times New Roman~7pt~0",
+     "W~230 470 216 470~#008800~1~0~none~gge6a45050309~0",
+     "N~216~470~0~#0000ff~SCL~gge2ca6882a2a~end~216~478~Times New Roman~7pt~0",
+     "W~490 305 476 305~#008800~1~0~none~gged5e8209808~0",
+     "N~476~305~0~#0000ff~SCL~gge4f247066bb~end~476~313~Times New Roman~7pt~0",
+     "W~370 305 384 305~#008800~1~0~none~ggee2c87e788e~0",
+     "N~384~305~0~#0000ff~SDA~ggef9d996d26e~end~384~313~Times New Roman~7pt~0",
+     "W~330 470 316 470~#008800~1~0~none~ggebb3bb9d3da~0",
+     "N~316~470~0~#0000ff~SDA~gge78c1e6c7ec~end~316~478~Times New Roman~7pt~0",
+     "W~630 295 644 295~#008800~1~0~none~gge8b8ef6162c~0",
+     "N~644~295~0~#0000ff~SDA~gge7de85c1436~end~644~303~Times New Roman~7pt~0",
+     "W~370 295 384 295~#008800~1~0~none~gge165ea4054e~0",
+     "N~384~295~0~#0000ff~GND~ggedb5c9623d9~end~384~303~Times New Roman~7pt~0",
+     "W~370 315 384 315~#008800~1~0~none~gge13b586dfc0~0",
+     "N~384~315~0~#0000ff~GND~gge7c470810c2~end~384~323~Times New Roman~7pt~0",
+     "W~230 305 216 305~#008800~1~0~none~gged9af51efcd~0",
+     "N~216~305~0~#0000ff~GND~ggecac812de60~end~216~313~Times New Roman~7pt~0",
+     "W~570 470 584 470~#008800~1~0~none~gge7d7becdc0c~0",
+     "N~584~470~0~#0000ff~GND~gge78c88b738a~end~584~478~Times New Roman~7pt~0",
+     "W~670 470 684 470~#008800~1~0~none~gge88964a4655~0",
+     "N~684~470~0~#0000ff~GND~gge5f31c4eefd~end~684~478~Times New Roman~7pt~0",
+     "W~630 305 644 305~#008800~1~0~none~gge61e3a80e2c~0",
+     "N~644~305~0~#0000ff~GND~gge00315146cf~end~644~313~Times New Roman~7pt~0"
+    ],
+    "BBox": {
+     "x": 0,
+     "y": 0,
+     "width": 4000,
+     "height": 3000
+    },
+    "colors": {}
+   }
+  }
+ ]
+}
